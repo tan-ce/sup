@@ -49,12 +49,28 @@ function authenticated() {
  * If invalid, return false
  */
 function auth_check($name, $pwd) {
-    global $users;
+    if (NGINX_AUTH) {
+        $ch = curl_init(NGINX_AUTH_URL);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+        curl_setopt($ch, CURLOPT_USERPWD, $name.":".$pwd);
+        $output = curl_exec($ch);
+        curl_close($ch);
 
-    if (!isset($users[$name])) return false;
-    $ret = password_verify($pwd, $users[$name]);
-    if ($ret) $_SESSION['auth'] = 'OK';
-    return $ret;
+        if ($output == "OK") {
+            $_SESSION['auth'] = 'OK';
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        global $users;
+
+        if (!isset($users[$name])) return false;
+        $ret = password_verify($pwd, $users[$name]);
+        if ($ret) $_SESSION['auth'] = 'OK';
+        return $ret;
+    }
 }
 
 // Logout

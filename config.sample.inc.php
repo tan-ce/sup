@@ -37,6 +37,12 @@ define('BASE_URL', 'https://foobar.com/your/dir/here');
 /* Upload destination directory. Must be writable by the server */
 define('UPLOAD_DIR', '/path/to/destination/dir');
 
+/* true - Use Nginx-style authentication, false - use user array below */
+define('NGINX_AUTH', false);
+
+/* The URL to use for Nginx-style authentication */
+define('NGINX_AUTH_URL', 'http://localhost/auth-url');
+
 /*
  * List of usernames and passwords. Usernames in the key, and password hashes
  * in the values.
