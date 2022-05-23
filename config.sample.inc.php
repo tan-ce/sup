@@ -37,15 +37,20 @@ define('BASE_URL', 'https://foobar.com/your/dir/here');
 /* Upload destination directory. Must be writable by the server */
 define('UPLOAD_DIR', '/path/to/destination/dir');
 
-/* true - Use Nginx-style authentication, false - use user array below */
-define('NGINX_AUTH', false);
+/* Uncomment for Nginx-style authentication */
+// define('NGINX_AUTH_URL', 'http://localhost/auth-url');
 
-/* The URL to use for Nginx-style authentication */
-define('NGINX_AUTH_URL', 'http://localhost/auth-url');
+/*
+ * Optional SSL settings. These are the same as their CURLOPT_ counterparts.
+ */
+// define('NGINX_AUTH_CAINFO',        '/path/to/ca.pem');
+// define('NGINX_AUTH_SSLCERT',       '/path/to/client/cert.pem');
+// define('NGINX_AUTH_SSLKEY',        '/path/to/client/key.pem');
+// define('NGINX_AUTH_SSLCERTPASSWD', 'key file password');
 
 /*
  * List of usernames and passwords. Usernames in the key, and password hashes
- * in the values.
+ * in the values. Ignored if NGINX_AUTH_URL is used
  *
  * Use hasher.php to generate hashes.
  */

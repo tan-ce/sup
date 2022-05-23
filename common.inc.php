@@ -42,6 +42,16 @@ function authenticated() {
     return isset($_SESSION['auth']) && $_SESSION['auth'] == 'OK';
 }
 
+function get_curl_opt($ch, $cfg) {
+    $cfg_src = 'NGINX_AUTH_'.$cfg;
+    if (!defined($cfg_src)) return;
+    $val = constant($cfg_src);
+    if (!curl_setopt($ch, constant('CURLOPT_'.$cfg), $val)) {
+        echo "Authentication: Failed to set CURLOPT_$cfg";
+        exit;
+    }
+}
+
 /*
  * Check the username and password.
  *
@@ -49,12 +59,20 @@ function authenticated() {
  * If invalid, return false
  */
 function auth_check($name, $pwd) {
-    if (NGINX_AUTH) {
+    if (defined('NGINX_AUTH_URL')) {
         $ch = curl_init(NGINX_AUTH_URL);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_TIMEOUT, 2);
         curl_setopt($ch, CURLOPT_USERPWD, $name.":".$pwd);
+        get_curl_opt($ch, 'CAINFO');
+        get_curl_opt($ch, 'SSLCERT');
+        get_curl_opt($ch, 'SSLKEY');
+        get_curl_opt($ch, 'SSLCERTPASSWD');
         $output = curl_exec($ch);
+        if ($output === false) {
+            echo "Authentication error: ".curl_error($ch);
+            exit;
+        }
         curl_close($ch);
 
         if ($output == "OK") {
